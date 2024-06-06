@@ -1,0 +1,35 @@
+# Compiled object files, libraries, resources, etc.
+*.o
+*.a
+*.d
+*.bin
+*.elf
+*.map
+
+# Directory for ESP-IDF build output
+/build/
+# If using non default build output direcotry
+out/
+
+# Python virtual environment directories
+venv/
+.venv/
+
+# Other files and directories to ignore
+*.log
+*.pyc
+__pycache__/
+.DS_Store
+.vscode/
+
+# CMake build directory
+/CMakeFiles/
+/CMakeCache.txt
+/cmake_install.cmake
+/build.log
+
+# Lock files
+*.lock
+
+# ESP-IDF managed components
+managed_components/
