@@ -150,7 +150,7 @@ extern "C" void app_main() {
     
     // xTaskCreate(&RelayControlTask, "RelayControlTask", 2048, NULL, 5, NULL);
 
-    // /* Your existing person detection code and task creation here */
+    // /* Your existing bottle detection code and task creation here */
     // xTaskCreate((TaskFunction_t)&tf_main, "tf_main", 4 * 1024, NULL, 8, NULL);
 
 //     vTaskDelete(NULL);

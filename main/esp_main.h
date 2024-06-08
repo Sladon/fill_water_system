@@ -20,13 +20,6 @@
 // Enable this to get cpu stats
 #define COLLECT_CPU_STATS 1
 
-#if !defined(CLI_ONLY_INFERENCE)
-// Enable display support if BSP is enabled in menuconfig
-#if (CONFIG_TFLITE_USE_BSP)
-#define DISPLAY_SUPPORT 1
-#endif
-#endif
-
 #ifdef __cplusplus
 extern "C" {
 #endif

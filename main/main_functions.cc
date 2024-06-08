@@ -148,7 +148,7 @@ void loop() {
     TfLiteTensor* output = interpreter->output(0);
 
     // Process the inference results.
-    int8_t person_score = output->data.uint8[kPersonIndex];
+    int8_t person_score = output->data.uint8[kBottleIndex];
 
     float person_score_f =
         (person_score - output->params.zero_point) * output->params.scale;
@@ -218,8 +218,8 @@ void run_inference(void *ptr) {
   TfLiteTensor* output = interpreter->output(0);
 
   // Process the inference results.
-  int8_t person_score = output->data.uint8[kPersonIndex];
-  int8_t no_person_score = output->data.uint8[kNotAPersonIndex];
+  int8_t person_score = output->data.uint8[kBottleIndex];
+  int8_t no_person_score = output->data.uint8[kNotABottleIndex];
 
   float person_score_f =
       (person_score - output->params.zero_point) * output->params.scale;

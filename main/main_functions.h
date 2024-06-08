@@ -13,8 +13,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
-#ifndef TENSORFLOW_LITE_MICRO_EXAMPLES_PERSON_DETECTION_MAIN_FUNCTIONS_H_
-#define TENSORFLOW_LITE_MICRO_EXAMPLES_PERSON_DETECTION_MAIN_FUNCTIONS_H_
+#ifndef TENSORFLOW_LITE_MICRO_BOTTLE_DETECTION_MAIN_FUNCTIONS_H_
+#define TENSORFLOW_LITE_MICRO_BOTTLE_DETECTION_MAIN_FUNCTIONS_H_
 
 // Expose a C friendly interface for main functions.
 #ifdef __cplusplus
@@ -38,4 +38,4 @@ void hcsr04_task(void *pvParameters);
 }
 #endif
 
-#endif  // TENSORFLOW_LITE_MICRO_EXAMPLES_PERSON_DETECTION_MAIN_FUNCTIONS_H_
+#endif  // TENSORFLOW_LITE_MICRO_BOTTLE_DETECTION_MAIN_FUNCTIONS_H_

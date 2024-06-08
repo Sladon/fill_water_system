@@ -13,8 +13,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
-#ifndef TENSORFLOW_LITE_MICRO_EXAMPLES_PERSON_DETECTION_IMAGE_PROVIDER_H_
-#define TENSORFLOW_LITE_MICRO_EXAMPLES_PERSON_DETECTION_IMAGE_PROVIDER_H_
+#ifndef TENSORFLOW_LITE_MICRO_BOTTLE_DETECTION_IMAGE_PROVIDER_H_
+#define TENSORFLOW_LITE_MICRO_BOTTLE_DETECTION_IMAGE_PROVIDER_H_
 
 #include "tensorflow/lite/c/common.h"
 #include "tensorflow/lite/micro/micro_log.h"
@@ -44,4 +44,4 @@ TfLiteStatus InitCamera();
 
 #endif /* CONFIG_PERSON_DETECTION_STATIC */
 
-#endif  // TENSORFLOW_LITE_MICRO_EXAMPLES_PERSON_DETECTION_IMAGE_PROVIDER_H_
+#endif  // TENSORFLOW_LITE_MICRO_BOTTLE_DETECTION_IMAGE_PROVIDER_H_
