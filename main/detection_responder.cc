@@ -24,10 +24,10 @@ limitations under the License.
 
 #include "esp_main.h"
 
-void RespondToDetection(float person_score, float no_person_score) {
-  int person_score_int = (person_score) * 100 + 0.5;
-  (void) no_person_score; // unused
-  
+void RespondToDetection(float bottle_score, float no_bottle_score) {
+  int bottle_score_int = (bottle_score) * 100 + 0.5;
+  (void) no_bottle_score; // unused
+
   MicroPrintf("bottle score:%d%%, no bottle score %d%%",
-              person_score_int, 100 - person_score_int);
+              bottle_score_int, 100 - bottle_score_int);
 }

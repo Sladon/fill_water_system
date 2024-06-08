@@ -148,12 +148,12 @@ void loop() {
     TfLiteTensor* output = interpreter->output(0);
 
     // Process the inference results.
-    int8_t person_score = output->data.uint8[kBottleIndex];
+    int8_t bottle_score = output->data.uint8[kBottleIndex];
 
-    float person_score_f =
-        (person_score - output->params.zero_point) * output->params.scale;
-    RespondToDetection(person_score_f, 1-person_score_f);
-    if (person_score_f > 0.6) {
+    float bottle_score_f =
+        (bottle_score - output->params.zero_point) * output->params.scale;
+    RespondToDetection(bottle_score_f, 1-bottle_score_f);
+    if (bottle_score_f > 0.6) {
       gpio_set_level(RELAY_PIN, 1); // Turn on relay
     } else {
       gpio_set_level(RELAY_PIN, 0); // Turn off relay
@@ -218,14 +218,14 @@ void run_inference(void *ptr) {
   TfLiteTensor* output = interpreter->output(0);
 
   // Process the inference results.
-  int8_t person_score = output->data.uint8[kBottleIndex];
-  int8_t no_person_score = output->data.uint8[kNotABottleIndex];
+  int8_t bottle_score = output->data.uint8[kBottleIndex];
+  int8_t no_bottle_score = output->data.uint8[kNotABottleIndex];
 
-  float person_score_f =
-      (person_score - output->params.zero_point) * output->params.scale;
-  float no_person_score_f =
-      (no_person_score - output->params.zero_point) * output->params.scale;
-  RespondToDetection(person_score_f, no_person_score_f);
+  float bottle_score_f =
+      (bottle_score - output->params.zero_point) * output->params.scale;
+  float no_bottle_score_f =
+      (no_bottle_score - output->params.zero_point) * output->params.scale;
+  RespondToDetection(bottle_score_f, no_bottle_score_f);
 }
 
 portMUX_TYPE distanceLock;
