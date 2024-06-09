@@ -21,7 +21,7 @@ limitations under the License.
 #ifndef TENSORFLOW_LITE_MICRO_BOTTLE_DETECTION_MODEL_DATA_H_
 #define TENSORFLOW_LITE_MICRO_BOTTLE_DETECTION_MODEL_DATA_H_
 
-extern const unsigned char g_person_detect_model_data[];
-extern const int g_person_detect_model_data_len;
+extern const unsigned char g_bottle_detect_model_data[];
+extern const int g_bottle_detect_model_data_len;
 
 #endif  // TENSORFLOW_LITE_MICRO_BOTTLE_DETECTION_MODEL_DATA_H_
