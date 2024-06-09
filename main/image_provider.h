@@ -13,8 +13,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
-#ifndef TENSORFLOW_LITE_MICRO_EXAMPLES_PERSON_DETECTION_IMAGE_PROVIDER_H_
-#define TENSORFLOW_LITE_MICRO_EXAMPLES_PERSON_DETECTION_IMAGE_PROVIDER_H_
+#ifndef TENSORFLOW_LITE_MICRO_BOTTLE_DETECTION_IMAGE_PROVIDER_H_
+#define TENSORFLOW_LITE_MICRO_BOTTLE_DETECTION_IMAGE_PROVIDER_H_
 
 #include "tensorflow/lite/c/common.h"
 #include "tensorflow/lite/micro/micro_log.h"
@@ -33,7 +33,7 @@ limitations under the License.
 // The reference implementation can have no platform-specific dependencies, so
 // it just returns a static image. For real applications, you should
 // ensure there's a specialized implementation that accesses hardware APIs.
-#ifndef CONFIG_PERSON_DETECTION_STATIC
+#ifndef CONFIG_BOTTTLE_DETECTION_STATIC
 
 // Returns buffer to be displayed
 void *image_provider_get_display_buf();
@@ -42,6 +42,6 @@ TfLiteStatus GetImage(int image_width, int image_height, int channels, int8_t* i
 
 TfLiteStatus InitCamera();
 
-#endif /* CONFIG_PERSON_DETECTION_STATIC */
+#endif /* CONFIG_BOTTTLE_DETECTION_STATIC */
 
-#endif  // TENSORFLOW_LITE_MICRO_EXAMPLES_PERSON_DETECTION_IMAGE_PROVIDER_H_
+#endif  // TENSORFLOW_LITE_MICRO_BOTTLE_DETECTION_IMAGE_PROVIDER_H_

@@ -13,21 +13,15 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
-/*
- * SPDX-FileCopyrightText: 2019-2023 Espressif Systems (Shanghai) CO LTD
- *
- * SPDX-License-Identifier: Apache-2.0
- */
+// This is a standard TensorFlow Lite model file that has been converted into a
+// C data array, so it can be easily compiled into a binary for devices that
+// don't have a file system. It was created using the command:
+// xxd -i person_detect.tflite > person_detect_model_data.cc
 
-#include "detection_responder.h"
-#include "tensorflow/lite/micro/micro_log.h"
+#ifndef TENSORFLOW_LITE_MICRO_BOTTLE_DETECTION_MODEL_DATA_H_
+#define TENSORFLOW_LITE_MICRO_BOTTLE_DETECTION_MODEL_DATA_H_
 
-#include "esp_main.h"
+extern const unsigned char g_bottle_detect_model_data[];
+extern const int g_bottle_detect_model_data_len;
 
-void RespondToDetection(float bottle_score, float no_bottle_score) {
-  int bottle_score_int = (bottle_score) * 100 + 0.5;
-  (void) no_bottle_score; // unused
-
-  MicroPrintf("bottle score:%d%%, no bottle score %d%%",
-              bottle_score_int, 100 - bottle_score_int);
-}
+#endif  // TENSORFLOW_LITE_MICRO_BOTTLE_DETECTION_MODEL_DATA_H_

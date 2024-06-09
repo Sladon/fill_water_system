@@ -19,7 +19,7 @@ limitations under the License.
 #include "detection_responder.h"
 #include "image_provider.h"
 #include "model_settings.h"
-#include "person_detect_model_data.h"
+#include "bottle_detect_model_data.h"
 #include "tensorflow/lite/micro/micro_interpreter.h"
 #include "tensorflow/lite/micro/micro_log.h"
 #include "tensorflow/lite/micro/micro_mutable_op_resolver.h"
@@ -76,7 +76,7 @@ static uint8_t *tensor_arena;//[kTensorArenaSize]; // Maybe we should move this 
 void setup() {
   // Map the model into a usable data structure. This doesn't involve any
   // copying or parsing, it's a very lightweight operation.
-  model = tflite::GetModel(g_person_detect_model_data);
+  model = tflite::GetModel(g_bottle_detect_model_data);
   if (model->version() != TFLITE_SCHEMA_VERSION) {
     MicroPrintf("Model provided is schema version %d not equal to supported "
                 "version %d.", model->version(), TFLITE_SCHEMA_VERSION);
@@ -148,12 +148,12 @@ void loop() {
     TfLiteTensor* output = interpreter->output(0);
 
     // Process the inference results.
-    int8_t person_score = output->data.uint8[kPersonIndex];
+    int8_t bottle_score = output->data.uint8[kBottleIndex];
 
-    float person_score_f =
-        (person_score - output->params.zero_point) * output->params.scale;
-    RespondToDetection(person_score_f, 1-person_score_f);
-    if (person_score_f > 0.6) {
+    float bottle_score_f =
+        (bottle_score - output->params.zero_point) * output->params.scale;
+    RespondToDetection(bottle_score_f, 1-bottle_score_f);
+    if (bottle_score_f > 0.6) {
       gpio_set_level(RELAY_PIN, 1); // Turn on relay
     } else {
       gpio_set_level(RELAY_PIN, 0); // Turn off relay
@@ -218,14 +218,14 @@ void run_inference(void *ptr) {
   TfLiteTensor* output = interpreter->output(0);
 
   // Process the inference results.
-  int8_t person_score = output->data.uint8[kPersonIndex];
-  int8_t no_person_score = output->data.uint8[kNotAPersonIndex];
+  int8_t bottle_score = output->data.uint8[kBottleIndex];
+  int8_t no_bottle_score = output->data.uint8[kNotABottleIndex];
 
-  float person_score_f =
-      (person_score - output->params.zero_point) * output->params.scale;
-  float no_person_score_f =
-      (no_person_score - output->params.zero_point) * output->params.scale;
-  RespondToDetection(person_score_f, no_person_score_f);
+  float bottle_score_f =
+      (bottle_score - output->params.zero_point) * output->params.scale;
+  float no_bottle_score_f =
+      (no_bottle_score - output->params.zero_point) * output->params.scale;
+  RespondToDetection(bottle_score_f, no_bottle_score_f);
 }
 
 portMUX_TYPE distanceLock;

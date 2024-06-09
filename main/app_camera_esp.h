@@ -13,8 +13,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
-#ifndef TENSORFLOW_LITE_MICRO_EXAMPLES_PERSON_DETECTION_ESP_APP_CAMERA_ESP_H_
-#define TENSORFLOW_LITE_MICRO_EXAMPLES_PERSON_DETECTION_ESP_APP_CAMERA_ESP_H_
+#ifndef TENSORFLOW_LITE_MICRO_BOTTLE_DETECTION_ESP_APP_CAMERA_ESP_H_
+#define TENSORFLOW_LITE_MICRO_BOTTLE_DETECTION_ESP_APP_CAMERA_ESP_H_
 
 #include "sensor.h"
 #include "esp_camera.h"
@@ -23,18 +23,7 @@ limitations under the License.
 
 #include "esp_main.h"
 
-/**
- * PIXFORMAT_RGB565,    // 2BPP/RGB565
- * PIXFORMAT_YUV422,    // 2BPP/YUV422
- * PIXFORMAT_GRAYSCALE, // 1BPP/GRAYSCALE
- * PIXFORMAT_JPEG,      // JPEG/COMPRESSED
- * PIXFORMAT_RGB888,    // 3BPP/RGB888
- */
-#if defined DISPLAY_SUPPORT
-#define CAMERA_PIXEL_FORMAT PIXFORMAT_RGB565
-#else
 #define CAMERA_PIXEL_FORMAT PIXFORMAT_GRAYSCALE
-#endif
 /*
  * FRAMESIZE_96X96,    // 96x96
  * FRAMESIZE_QQVGA,    // 160x120
@@ -248,4 +237,4 @@ int app_camera_init();
 }
 #endif
 
-#endif  // TENSORFLOW_LITE_MICRO_EXAMPLES_PERSON_DETECTION_ESP_APP_CAMERA_ESP_H_
+#endif  // TENSORFLOW_LITE_MICRO_BOTTLE_DETECTION_ESP_APP_CAMERA_ESP_H_

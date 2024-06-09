@@ -16,10 +16,6 @@ limitations under the License.
 #include "app_camera_esp.h"
 #include "sdkconfig.h"
 
-#if (CONFIG_TFLITE_USE_BSP)
-#include "bsp/esp-bsp.h"
-#endif
-
 static const char *TAG = "app_camera";
 
 int app_camera_init() {
@@ -39,11 +35,6 @@ int app_camera_init() {
   gpio_config(&conf);
 #endif // CONFIG_CAMERA_MODULE_ESP_EYE || CONFIG_CAMERA_MODULE_ESP32_CAM_BOARD
 
-#if (CONFIG_TFLITE_USE_BSP)
-  bsp_i2c_init();
-  camera_config_t config = BSP_CAMERA_DEFAULT_CONFIG;
-
-#else // CONFIG_TFLITE_USE_BSP
   camera_config_t config;
   config.ledc_channel = LEDC_CHANNEL_0;
   config.ledc_timer = LEDC_TIMER_0;
@@ -67,7 +58,6 @@ int app_camera_init() {
   config.jpeg_quality = 10;
   config.fb_count = 2;
   config.fb_location = CAMERA_FB_IN_PSRAM;
-#endif // CONFIG_TFLITE_USE_BSP
 
   // Pixel format and frame size are specific configurations options for this application.
   // Frame size must be 96x96 pixels to match the trained model.
