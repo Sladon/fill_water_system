@@ -88,14 +88,12 @@ void setup() {
     return;
   }
 
-  static tflite::MicroMutableOpResolver<7> micro_op_resolver;
+  static tflite::MicroMutableOpResolver<5> micro_op_resolver;
   micro_op_resolver.AddConv2D();
   micro_op_resolver.AddMaxPool2D();
   micro_op_resolver.AddFullyConnected();
   micro_op_resolver.AddReshape();
   micro_op_resolver.AddLogistic();
-  micro_op_resolver.AddQuantize();
-  micro_op_resolver.AddDequantize();
 
   static tflite::MicroInterpreter static_interpreter(
       model, micro_op_resolver, tensor_arena, kTensorArenaSize);
@@ -127,6 +125,9 @@ void loop() {
     }
 
     // Run the model on this input and make sure it succeeds.
+    for (int i = 0; i < kNumCols * kNumRows; i++) {
+      printf("%d, ", input->data.int8[i]);
+    }
     if (kTfLiteOk != interpreter->Invoke()) {
       MicroPrintf("Invoke failed.");
     }
@@ -168,7 +169,8 @@ void loop() {
 void run_inference(void *ptr) {
   /* Convert from uint8 picture data to int8 */
   for (int i = 0; i < kNumCols * kNumRows; i++) {
-    input->data.int8[i] = ((uint8_t *) ptr)[i] ^ 0x80;
+    input->data.int8[i] = ((uint8_t *) ptr)[i];
+    printf("%d, ", input->data.int8[i]);
   }
 
 #if defined(COLLECT_CPU_STATS)
