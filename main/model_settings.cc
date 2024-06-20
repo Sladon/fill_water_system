@@ -16,6 +16,6 @@ limitations under the License.
 #include "model_settings.h"
 
 const char* kCategoryLabels[kCategoryCount] = {
-    "not_bottle",
     "bottle",
+    "not_bottle"
 };

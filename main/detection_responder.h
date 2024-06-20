@@ -27,6 +27,6 @@ limitations under the License.
 // does not contain a bottle. Typically if bottle_score > no bottle score, the
 // image is considered to contain a bottle.  This threshold may be adjusted for
 // particular applications.
-void RespondToDetection(float bottle_score, float no_bottle_score);
+void RespondToDetection(float bottle_score);
 
 #endif  // TENSORFLOW_LITE_MICRO_BOTTLE_DETECTION_DETECTION_RESPONDER_H_

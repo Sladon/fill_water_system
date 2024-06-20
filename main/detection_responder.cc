@@ -24,9 +24,8 @@ limitations under the License.
 
 #include "esp_main.h"
 
-void RespondToDetection(float bottle_score, float no_bottle_score) {
+void RespondToDetection(float bottle_score) {
   int bottle_score_int = (bottle_score) * 100 + 0.5;
-  (void) no_bottle_score; // unused
 
   MicroPrintf("bottle score:%d%%, no bottle score %d%%",
               bottle_score_int, 100 - bottle_score_int);

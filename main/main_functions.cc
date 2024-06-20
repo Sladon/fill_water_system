@@ -88,11 +88,12 @@ void setup() {
     return;
   }
 
-  static tflite::MicroMutableOpResolver<5> micro_op_resolver;
+  static tflite::MicroMutableOpResolver<6> micro_op_resolver;
   micro_op_resolver.AddConv2D();
   micro_op_resolver.AddMaxPool2D();
   micro_op_resolver.AddFullyConnected();
   micro_op_resolver.AddReshape();
+  micro_op_resolver.AddRelu();
   micro_op_resolver.AddLogistic();
 
   static tflite::MicroInterpreter static_interpreter(
@@ -138,8 +139,8 @@ void loop() {
     int8_t bottle_score = output->data.uint8[kBottleIndex];
 
     float bottle_score_f =
-        (bottle_score - output->params.zero_point) * output->params.scale;
-    RespondToDetection(bottle_score_f, 1-bottle_score_f);
+        1-(bottle_score - output->params.zero_point) * output->params.scale;
+    RespondToDetection(bottle_score_f);
     if (bottle_score_f > 0.6) {
       gpio_set_level(RELAY_PIN, 1); 
     } else {
@@ -207,13 +208,10 @@ void run_inference(void *ptr) {
 
   // Process the inference results.
   int8_t bottle_score = output->data.uint8[kBottleIndex];
-  int8_t no_bottle_score = output->data.uint8[kNotABottleIndex];
 
   float bottle_score_f =
-      (bottle_score - output->params.zero_point) * output->params.scale;
-  float no_bottle_score_f =
-      (no_bottle_score - output->params.zero_point) * output->params.scale;
-  RespondToDetection(bottle_score_f, no_bottle_score_f);
+      1-(bottle_score - output->params.zero_point) * output->params.scale;
+  RespondToDetection(bottle_score_f);
 }
 
 portMUX_TYPE distanceLock;
@@ -274,6 +272,6 @@ void measure_task(void *pvParameters) {
   while(1) {
     distance = hcsr04_measure();
     ESP_LOGI("HCSR04", "Distance: %.2f cm", distance);
-    vTaskDelay(pdMS_TO_TICKS(1000)); // Delay 1 second
+    vTaskDelay(pdMS_TO_TICKS(1000));
   }
 }

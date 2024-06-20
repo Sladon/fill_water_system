@@ -110,8 +110,7 @@ static int inference_cli_handler(int argc, char *argv[])
         ESP_LOGE(TAG, "Please Enter a valid Number ( 0 - %d)", IMAGE_COUNT-1);
         return -1;
     }
-   // char file_name[30];
-   // sprintf(file_name, "image%d.raw", image_number);
+    
     unsigned detect_time;
     detect_time = esp_timer_get_time();
     run_inference((void *)image_database[image_number]);
