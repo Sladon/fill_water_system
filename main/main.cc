@@ -26,7 +26,6 @@ limitations under the License.
 #endif
 
 void camera_task(void) {
-  setup();
 #if CLI_ONLY_INFERENCE
   esp_cli_start();
   vTaskDelay(portMAX_DELAY);
