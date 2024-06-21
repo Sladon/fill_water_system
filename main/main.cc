@@ -31,7 +31,6 @@ void camera_task(void) {
   esp_cli_start();
   vTaskDelay(portMAX_DELAY);
 #else
-  hardware_init();
   xTaskCreate(measure_task, "measure_task", 2 * 1024, NULL, 5, NULL);
   while (true) {
     loop();
@@ -40,6 +39,7 @@ void camera_task(void) {
 }
 
 extern "C" void app_main() {
+  setup();
   xTaskCreate((TaskFunction_t)&camera_task, "camera_task", 4 * 1024, NULL, 8, NULL);
   vTaskDelete(NULL);
 }

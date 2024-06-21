@@ -1,18 +1,3 @@
-/* Copyright 2019 The TensorFlow Authors. All Rights Reserved.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-==============================================================================*/
-
 #include "main_functions.h"
 
 #include "esp_log.h"
@@ -33,6 +18,7 @@ limitations under the License.
 #include <esp_log.h>
 #include "esp_main.h"
 
+#ifndef CLI_ONLY_INFERENCE
 #include "driver/gpio.h"
 
 #define RELAY_PIN GPIO_NUM_14
@@ -47,30 +33,29 @@ limitations under the License.
 
 #define DISTANCE_MIN_RANGE 10
 #define DISTANCE_MAX_RANGE 16
+#endif
 
-// Globals, used for compatibility with Arduino-style sketches.
 namespace {
 const tflite::Model* model = nullptr;
 tflite::MicroInterpreter* interpreter = nullptr;
 TfLiteTensor* input = nullptr;
+#ifndef CLI_ONLY_INFERENCE
 float distance = -1;
-
-// In order to use optimized tensorflow lite kernels, a signed int8_t quantized
-// model is preferred over the legacy unsigned model format. This means that
-// throughout this project, input images must be converted from unisgned to
-// signed format. The easiest and quickest way to convert from unsigned to
-// signed 8-bit integers is to subtract 128 from the unsigned value to get a
-// signed value.
+#endif
 
 #ifdef CONFIG_IDF_TARGET_ESP32S3
 constexpr int scratchBufSize = 40 * 1024;
 #else
 constexpr int scratchBufSize = 0;
 #endif
-// An area of memory to use for input, output, and intermediate arrays.
-constexpr int kTensorArenaSize = 180 * 1024 + scratchBufSize;
-static uint8_t *tensor_arena;//[kTensorArenaSize]; // Maybe we should move this to external
-}  // namespace
+
+constexpr int kTensorArenaSize = 60 * 1024 + scratchBufSize;
+static uint8_t *tensor_arena;
+}
+
+#ifndef CLI_ONLY_INFERENCE
+portMUX_TYPE distanceLock;
+#endif
 
 void setup() {
   model = tflite::GetModel(g_bottle_detect_model_data);
@@ -114,6 +99,11 @@ void setup() {
     MicroPrintf("InitCamera failed\n");
     return;
   }
+
+  gpio_set_direction(RELAY_PIN, GPIO_MODE_OUTPUT);
+  gpio_set_direction(TRIGGER_PIN, GPIO_MODE_OUTPUT);
+  gpio_set_direction(ECHO_PIN, GPIO_MODE_INPUT);
+  spinlock_initialize(&distanceLock);
 #endif
 }
 
@@ -150,7 +140,7 @@ void loop() {
     gpio_set_level(RELAY_PIN, 0);
   }
   
-  vTaskDelay(pdMS_TO_TICKS(10)); // to avoid watchdog trigger
+  vTaskDelay(pdMS_TO_TICKS(10));
 }
 #endif
 
@@ -185,7 +175,6 @@ void run_inference(void *ptr) {
 #if defined(COLLECT_CPU_STATS)
   long long total_time = (esp_timer_get_time() - start_time);
   printf("Total time = %lld\n", total_time / 1000);
-  //printf("Softmax time = %lld\n", softmax_total_time / 1000);
   printf("FC time = %lld\n", fc_total_time / 1000);
   printf("DC time = %lld\n", dc_total_time / 1000);
   printf("conv time = %lld\n", conv_total_time / 1000);
@@ -195,7 +184,6 @@ void run_inference(void *ptr) {
 
   /* Reset times */
   total_time = 0;
-  //softmax_total_time = 0;
   dc_total_time = 0;
   conv_total_time = 0;
   fc_total_time = 0;
@@ -206,7 +194,6 @@ void run_inference(void *ptr) {
 
   TfLiteTensor* output = interpreter->output(0);
 
-  // Process the inference results.
   int8_t bottle_score = output->data.uint8[kBottleIndex];
 
   float bottle_score_f =
@@ -214,28 +201,18 @@ void run_inference(void *ptr) {
   RespondToDetection(bottle_score_f);
 }
 
-portMUX_TYPE distanceLock;
-void hardware_init() {
-  gpio_set_direction(RELAY_PIN, GPIO_MODE_OUTPUT);
-  gpio_set_direction(TRIGGER_PIN, GPIO_MODE_OUTPUT);
-  gpio_set_direction(ECHO_PIN, GPIO_MODE_INPUT);
-  spinlock_initialize(&distanceLock);
-}
-
+#ifndef CLI_ONLY_INFERENCE
 float hcsr04_measure() {    
-  // Send a 10us pulse to trigger
   portENTER_CRITICAL(&distanceLock);
   gpio_set_level(TRIGGER_PIN, 0);
   esp_rom_delay_us(2);
     gpio_set_level(TRIGGER_PIN, 1);
     esp_rom_delay_us(TRIGGER_HIGH_TIME_US);
     gpio_set_level(TRIGGER_PIN, 0);
-  
-  // Wait for echo to be high
-  int timeout = 3000;  // Maximum waiting time in microseconds
+
+  int timeout = 3000;
   while (gpio_get_level(ECHO_PIN) == 0 && timeout > 0) {
-    esp_rom_delay_us(1);  // Small delay to prevent overloading CPU
-    // taskYIELD();      // Yield to reset WDT and allow other tasks to run
+    esp_rom_delay_us(1);
     --timeout;
   }
   int64_t start_time = esp_timer_get_time();
@@ -246,12 +223,10 @@ float hcsr04_measure() {
     return -1;
   }
 
-  // Wait for ECHO_PIN to go low (end of the echo pulse)
   portENTER_CRITICAL(&distanceLock);
   timeout = 3000;
   while (gpio_get_level(ECHO_PIN) == 1 && timeout > 0) {
-    esp_rom_delay_us(1);  // Small delay to prevent overloading CPU
-    // taskYIELD();      // Yield to reset WDT and allow other tasks to run
+    esp_rom_delay_us(1);
     --timeout;
   }
   int64_t end_time = esp_timer_get_time();
@@ -275,3 +250,4 @@ void measure_task(void *pvParameters) {
     vTaskDelay(pdMS_TO_TICKS(1000));
   }
 }
+#endif
