@@ -32,7 +32,7 @@ void loop();
 
 float hcsr04_measure();
 void hardware_init();
-void hcsr04_task(void *pvParameters);
+void measure_task(void *pvParameters);
 
 #ifdef __cplusplus
 }
