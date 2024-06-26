@@ -31,8 +31,8 @@
 #define PULSE_DURATION_MICROSECONDS 10
 #define TRIG_PIN_DELAY_MICROSECONDS 2
 
-#define DISTANCE_MIN_RANGE 10
-#define DISTANCE_MAX_RANGE 16
+#define DISTANCE_MIN_RANGE 5
+#define DISTANCE_MAX_RANGE 15
 #endif
 
 namespace {
@@ -104,22 +104,28 @@ void setup() {
 #ifndef CLI_ONLY_INFERENCE
 void loop() {
   if (distance >= DISTANCE_MIN_RANGE && distance <= DISTANCE_MAX_RANGE) {
-    // Get image from provider.
+
     if (kTfLiteOk != GetImage(kNumCols, kNumRows, kNumChannels, input->data.int8)) {
       MicroPrintf("Image capture failed.");
     }
 
-    // Run the model on this input and make sure it succeeds.
-    for (int i = 0; i < kNumCols * kNumRows; i++) {
-      printf("%d, ", input->data.int8[i]);
-    }
     if (kTfLiteOk != interpreter->Invoke()) {
       MicroPrintf("Invoke failed.");
+      // display image code
+      for (int i = 0; i < kNumCols; i++) {
+        for (int j = 0; j < kNumRows; j++) {
+          if (input->data.int8[i * kNumRows + j] > 0) {
+            MicroPrintf("*");
+          } else {
+            MicroPrintf(" ");
+          }
+        }
+        MicroPrintf("\n");
+      }
     }
 
     TfLiteTensor* output = interpreter->output(0);
 
-    // Process the inference results.
     int8_t bottle_score = output->data.uint8[kBottleIndex];
 
     float bottle_score_f =
@@ -148,16 +154,14 @@ void loop() {
 #endif
 
 void run_inference(void *ptr) {
-  /* Convert from uint8 picture data to int8 */
+  
   for (int i = 0; i < kNumCols * kNumRows; i++) {
     input->data.int8[i] = ((uint8_t *) ptr)[i];
-    printf("%d, ", input->data.int8[i]);
   }
 
 #if defined(COLLECT_CPU_STATS)
   long long start_time = esp_timer_get_time();
 #endif
-  // Run the model on this input and make sure it succeeds.
   if (kTfLiteOk != interpreter->Invoke()) {
     MicroPrintf("Invoke failed.");
   }
@@ -189,9 +193,9 @@ float hcsr04_measure() {
   portENTER_CRITICAL(&distanceLock);
   gpio_set_level(TRIGGER_PIN, 0);
   esp_rom_delay_us(2);
-    gpio_set_level(TRIGGER_PIN, 1);
-    esp_rom_delay_us(TRIGGER_HIGH_TIME_US);
-    gpio_set_level(TRIGGER_PIN, 0);
+  gpio_set_level(TRIGGER_PIN, 1);
+  esp_rom_delay_us(TRIGGER_HIGH_TIME_US);
+  gpio_set_level(TRIGGER_PIN, 0);
 
   int timeout = 3000;
   while (gpio_get_level(ECHO_PIN) == 0 && timeout > 0) {
